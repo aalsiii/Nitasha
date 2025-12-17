@@ -47,7 +47,9 @@ const Blogs = () => {
                             )}
                             <div className="p-6 flex flex-col flex-grow">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <span className="text-xs font-semibold text-terracotta-dark uppercase tracking-wider">{blog.category}</span>
+                                    <span className="text-xs font-semibold text-terracotta-dark uppercase tracking-wider">
+                                        {Array.isArray(blog.category) ? blog.category.join(' | ') : blog.category}
+                                    </span>
                                     <span className="text-gray-300">•</span>
                                     <span className="text-xs text-gray-400">{new Date(blog.createdAt).toLocaleDateString()}</span>
                                 </div>

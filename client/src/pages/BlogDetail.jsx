@@ -38,7 +38,9 @@ const BlogDetail = () => {
                         Back to Blogs
                     </Link>
                     <span className="text-gray-300">|</span>
-                    <span className="text-terracotta-dark font-semibold uppercase tracking-wider">{blog.category}</span>
+                    <span className="text-terracotta-dark font-semibold uppercase tracking-wider">
+                        {Array.isArray(blog.category) ? blog.category.join(' | ') : blog.category}
+                    </span>
                     <span className="text-gray-300">•</span>
                     <span className="text-gray-500">{new Date(blog.createdAt).toLocaleDateString()}</span>
                 </div>

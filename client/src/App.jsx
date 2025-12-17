@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
+import ScrollToTop from './components/common/ScrollToTop'; // Import ScrollToTop
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import BookingModal from './components/features/booking/BookingModal';
@@ -55,6 +56,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop /> {/* Add ScrollToTop here */}
         <div className="min-h-screen flex flex-col font-sans">
           <Navigation
             isScrolled={isScrolled}

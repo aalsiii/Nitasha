@@ -28,8 +28,8 @@ const BlogSchema = new mongoose.Schema({
         required: false
     },
     category: {
-        type: String,
-        default: 'General'
+        type: [String],
+        default: ['General']
     },
     tags: [String],
     createdAt: {

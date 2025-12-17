@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import SectionTitle from '../ui/SectionTitle';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import philosophyImage from '../../assets/philosophy.jpg';
 
 const Philosophy = () => {
     return (
@@ -12,7 +13,7 @@ const Philosophy = () => {
                     <div className="absolute inset-0 bg-terracotta rounded-full opacity-10 blur-3xl transform -translate-x-10 scale-90"></div>
                     <div className="relative z-10 rounded-t-[10rem] rounded-b-[2rem] overflow-hidden shadow-2xl border-4 border-white aspect-[4/5]">
                         <img
-                            src="https://images.unsplash.com/photo-1599447421405-0e5a10d0a51e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            src={philosophyImage}
                             alt="Dr. Nitasha Buldeo treating a patient"
                             className="w-full h-full object-cover"
                         />

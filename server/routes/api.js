@@ -8,6 +8,9 @@ router.get('/health', (req, res) => {
 
 const Booking = require('../models/Booking');
 
+const sendEmail = require('../utils/sendEmail');
+const { getBookingConfirmationTemplate } = require('../utils/emailTemplates');
+
 // Booking Route
 router.post('/book', async (req, res) => {
     console.log('Booking request:', req.body);
@@ -15,6 +18,22 @@ router.post('/book', async (req, res) => {
     try {
         const newBooking = new Booking(req.body);
         await newBooking.save();
+
+        // Send Confirmation Email
+        console.log('Attempting to send booking confirmation email to:', newBooking.email);
+        try {
+            await sendEmail({
+                email: newBooking.email,
+                subject: 'Appointment Booking Confirmation - Dr. Nitasha Buldeo',
+                message: `Thank you for booking. Your appointment for ${newBooking.service} is on ${newBooking.date} at ${newBooking.time}.`, // Fallback
+                html: getBookingConfirmationTemplate(newBooking)
+            });
+            console.log('Booking confirmation email sent successfully to:', newBooking.email);
+        } catch (emailError) {
+            console.error('Failed to send booking confirmation email. Error details:', emailError);
+            // We don't fail the request if email fails, just log it
+        }
+
         res.json({ success: true, message: 'Booking request received successfully' });
     } catch (error) {
         console.error('Error saving booking:', error);
@@ -72,16 +91,52 @@ const Availability = require('../models/Availability');
 // AVAILABILITY ROUTES
 // ----------------------------------------------------------------------
 
-// GET /api/availability - Get all future available dates
+// GET /api/availability - Get all future available dates with available slots
 router.get('/availability', async (req, res) => {
     try {
         // Get dates from today onwards
         const today = new Date().toISOString().split('T')[0];
-        const dates = await Availability.find({
+
+        // 1. Get defined availability
+        const availabilities = await Availability.find({
             date: { $gte: today },
             isAvailable: true
         });
-        res.json(dates);
+
+        // 2. Get existing bookings for these dates
+        // We only care about bookings that are NOT cancelled
+        const bookings = await Booking.find({
+            preferredDate: { $gte: new Date(today) },
+            status: { $ne: 'cancelled' }
+        });
+
+        // 3. Process availability to remove booked slots
+        const availabilityWithSlots = availabilities.map(avail => {
+            const dateStr = avail.date; // "YYYY-MM-DD"
+
+            // Find bookings for this specific date
+            // Note: Booking.preferredDate is a Date object, avail.date is String
+            const daysBookings = bookings.filter(b => {
+                const bookingDate = b.preferredDate.toISOString().split('T')[0];
+                return bookingDate === dateStr;
+            });
+
+            const bookedTimes = daysBookings.map(b => b.preferredTime);
+
+            // Filter out the booked times from the available slots
+            const remainingSlots = avail.slots.filter(slot => !bookedTimes.includes(slot));
+
+            return {
+                date: avail.date,
+                slots: remainingSlots,
+                isAvailable: remainingSlots.length > 0 // Only true if there are actually slots left
+            };
+        });
+
+        // Filter out dates that have no slots left
+        const finalAvailability = availabilityWithSlots.filter(a => a.isAvailable && a.slots.length > 0);
+
+        res.json(finalAvailability);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

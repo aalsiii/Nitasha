@@ -17,15 +17,8 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
         notes: ''
     });
     const [status, setStatus] = useState(null);
-    const [availableDates, setAvailableDates] = useState([]);
-
-    // Time slots (12:00 PM to 3:45 PM)
-    const timeSlots = [
-        "12:00 PM", "12:15 PM", "12:30 PM", "12:45 PM",
-        "1:00 PM", "1:15 PM", "1:30 PM", "1:45 PM",
-        "2:00 PM", "2:15 PM", "2:30 PM", "2:45 PM",
-        "3:00 PM", "3:15 PM", "3:30 PM", "3:45 PM"
-    ];
+    const [availableData, setAvailableData] = useState([]); // Stores full availability objects
+    const [currentSlots, setCurrentSlots] = useState([]); // Slots for the selected date
 
     useEffect(() => {
         if (isOpen) {
@@ -49,8 +42,8 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
         try {
             const res = await fetch('http://localhost:5000/api/availability');
             const data = await res.json();
-            const dates = data.filter(d => d.isAvailable).map(d => d.date);
-            setAvailableDates(dates);
+            // data is now [{ date, slots, isAvailable }, ...]
+            setAvailableData(data);
         } catch (err) {
             console.error("Failed to fetch availability", err);
         }
@@ -64,7 +57,20 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        // If date changes, update available slots
+        if (name === 'preferredDate') {
+            const selectedDay = availableData.find(d => d.date === value);
+            if (selectedDay) {
+                setCurrentSlots(selectedDay.slots);
+            } else {
+                setCurrentSlots([]);
+            }
+            // Reset time when date changes
+            setFormData(prev => ({ ...prev, [name]: value, preferredTime: '' }));
+        }
     };
 
     const handleTimeSelect = (time) => {
@@ -218,7 +224,7 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
                             {/* Date Selection */}
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-gray-700">Preferred Date</label>
-                                {availableDates.length > 0 ? (
+                                {availableData.length > 0 ? (
                                     <select
                                         name="preferredDate"
                                         value={formData.preferredDate}
@@ -227,9 +233,9 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
                                         className="w-full p-2 bg-gray-50 border rounded text-sm appearance-none"
                                     >
                                         <option value="">Select an available date...</option>
-                                        {availableDates.sort().map(date => (
-                                            <option key={date} value={date}>
-                                                {new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                        {availableData.map(item => (
+                                            <option key={item.date} value={item.date}>
+                                                {new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                                             </option>
                                         ))}
                                     </select>
@@ -243,24 +249,36 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
                             {/* Time Selection Grid */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-700">Preferred Time</label>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {timeSlots.map(time => (
-                                        <button
-                                            key={time}
-                                            type="button"
-                                            onClick={() => handleTimeSelect(time)}
-                                            className={`
-                                                py-2 px-1 text-xs rounded border transition-colors
-                                                ${formData.preferredTime === time
-                                                    ? 'bg-sage text-white border-sage'
-                                                    : 'bg-white text-gray-600 border-gray-200 hover:border-sage'
-                                                }
-                                            `}
-                                        >
-                                            {time}
-                                        </button>
-                                    ))}
-                                </div>
+                                {formData.preferredDate ? (
+                                    currentSlots.length > 0 ? (
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {currentSlots.map(time => (
+                                                <button
+                                                    key={time}
+                                                    type="button"
+                                                    onClick={() => handleTimeSelect(time)}
+                                                    className={`
+                                                        py-2 px-1 text-xs rounded border transition-colors
+                                                        ${formData.preferredTime === time
+                                                            ? 'bg-sage text-white border-sage'
+                                                            : 'bg-white text-gray-600 border-gray-200 hover:border-sage'
+                                                        }
+                                                    `}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-gray-500 italic p-2 bg-gray-50 border rounded">
+                                            No slots available for this date.
+                                        </div>
+                                    )
+                                ) : (
+                                    <div className="text-sm text-gray-400 italic p-2 border border-dashed rounded">
+                                        Please select a date first.
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-1">
