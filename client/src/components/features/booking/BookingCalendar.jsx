@@ -24,7 +24,7 @@ const BookingCalendar = ({ onDateSelect, selectedDate }) => {
         setLoading(true);
         try {
             // Try to fetch from API
-            const res = await axios.get('http://localhost:5000/api/availability');
+            const res = await axios.get('/api/availability');
             // Extract just the date strings from the response objects
             const apiDates = res.data.map(d => d.date);
             setAvailableDates(apiDates);

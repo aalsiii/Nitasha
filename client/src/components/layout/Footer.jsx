@@ -53,7 +53,7 @@ const Footer = ({ onNavigate }) => (
                 </div>
             </div>
             <div className="border-t border-white/10 pt-8 text-center text-xs text-sage-light">
-                © 2024 Dr. Nitasha Buldeo. All rights reserved.
+                © 2026 Dr. Nitasha Buldeo. All rights reserved.
             </div>
         </div>
     </footer>

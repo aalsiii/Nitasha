@@ -40,7 +40,7 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
 
     const fetchAvailability = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/availability');
+            const res = await fetch('/api/availability');
             const data = await res.json();
             // data is now [{ date, slots, isAvailable }, ...]
             setAvailableData(data);
@@ -88,7 +88,7 @@ const BookingModal = ({ isOpen, onClose, selectedService }) => {
         setStatus('submitting');
 
         try {
-            const response = await fetch('http://localhost:5000/api/book', {
+            const response = await fetch('/api/book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

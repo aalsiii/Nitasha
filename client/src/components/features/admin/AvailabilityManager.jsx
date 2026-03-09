@@ -22,7 +22,7 @@ const AvailabilityManager = () => {
 
     const fetchAvailability = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/availability');
+            const res = await axios.get('/api/availability');
             // Convert array of { date, isAvailable } to map
             const map = {};
             // Default everything to unavailable unless specified? Or available?
@@ -45,7 +45,7 @@ const AvailabilityManager = () => {
         setAvailabilityMap(prev => ({ ...prev, [date]: newStatus }));
 
         try {
-            await axios.post('http://localhost:5000/api/admin/availability', {
+            await axios.post('/api/admin/availability', {
                 date,
                 status: newStatus
             });

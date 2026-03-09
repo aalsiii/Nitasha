@@ -165,7 +165,7 @@ const Admin = () => {
 
     const fetchBlogs = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/blogs');
+            const res = await axios.get('/api/blogs');
             setBlogs(res.data);
         } catch (err) {
             console.error("Failed to fetch blogs", err);
@@ -212,9 +212,9 @@ const Admin = () => {
 
         try {
             if (view === 'create') {
-                await axios.post('http://localhost:5000/api/admin/blogs', data);
+                await axios.post('/api/admin/blogs', data);
             } else if (view === 'edit' && currentBlog) {
-                await axios.put(`http://localhost:5000/api/admin/blogs/${currentBlog._id}`, data);
+                await axios.put(`/api/admin/blogs/${currentBlog._id}`, data);
             }
             fetchBlogs();
             setView('list');
@@ -246,7 +246,7 @@ const Admin = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this blog?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/blogs/${id}`);
+                await axios.delete(`/api/admin/blogs/${id}`);
                 fetchBlogs();
             } catch (err) {
                 console.error(err);

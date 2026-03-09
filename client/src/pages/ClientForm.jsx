@@ -50,7 +50,7 @@ const ClientForm = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/client-form', {
+            const response = await fetch('/api/client-form', {
                 method: 'POST',
                 body: data, // Send FormData object
             });

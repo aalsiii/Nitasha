@@ -11,7 +11,7 @@ const Blogs = () => {
         const fetchBlogs = async () => {
             try {
                 // Assuming dev environment URL, in prod usage relative path if proxy setup or Env var
-                const res = await axios.get('http://localhost:5000/api/blogs');
+                const res = await axios.get('/api/blogs');
                 setBlogs(res.data);
                 setLoading(false);
             } catch (err) {

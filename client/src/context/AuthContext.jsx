@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/auth/me');
+            const { data } = await axios.get('/api/auth/me');
             setUser(data);
         } catch (err) {
             setUser(null);
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         setError(null);
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const { data } = await axios.post('/api/auth/login', { email, password });
             setUser(data);
             return data;
         } catch (err) {
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (name, email, password) => {
         setError(null);
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+            const { data } = await axios.post('/api/auth/register', { name, email, password });
             setUser(data);
             return data;
         } catch (err) {
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await axios.post('http://localhost:5000/api/auth/logout');
+            await axios.post('/api/auth/logout');
             setUser(null);
         } catch (err) {
             console.error('Logout failed', err);
@@ -67,27 +67,27 @@ export const AuthProvider = ({ children }) => {
 
     // Forgot Password
     const forgotPassword = async (email) => {
-        const res = await axios.post('http://localhost:5000/api/auth/forgotpassword', { email });
+        const res = await axios.post('/api/auth/forgotpassword', { email });
         return res.data;
     };
 
     // Reset Password
     const resetPassword = async (resetToken, password) => {
-        const res = await axios.put(`http://localhost:5000/api/auth/resetpassword/${resetToken}`, { password });
+        const res = await axios.put(`/api/auth/resetpassword/${resetToken}`, { password });
         setUser(res.data);
         return res.data;
     };
 
     // Update Password
     const updatePassword = async (currentPassword, newPassword) => {
-        const res = await axios.put('http://localhost:5000/api/auth/updatepassword', { currentPassword, newPassword });
+        const res = await axios.put('/api/auth/updatepassword', { currentPassword, newPassword });
         setUser(res.data);
         return res.data;
     };
 
     // Update Details
     const updateDetails = async (name, email) => {
-        const res = await axios.put('http://localhost:5000/api/auth/updatedetails', { name, email });
+        const res = await axios.put('/api/auth/updatedetails', { name, email });
         setUser(res.data);
         return res.data;
     };

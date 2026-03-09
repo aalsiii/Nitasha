@@ -38,7 +38,7 @@ const FeaturedBlog = () => {
         const fetchBlogs = async () => {
             try {
                 // Fetch all blogs, usually endpoints support pagination/params, but here we perform simple slice
-                const res = await axios.get('http://localhost:5000/api/blogs');
+                const res = await axios.get('/api/blogs');
                 // Sort by date desc (if not already) and take 3
                 const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setArticles(sorted.slice(0, 3));
