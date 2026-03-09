@@ -7,7 +7,7 @@
         "server": "cd server && npm run dev",
         "client": "cd client && npm run dev",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
-        "vercel-build": "npm run install-all && cd client && npm run build && cd .. && cp -r client/dist public"
+        "vercel-build": "npm run install-all && cd client && npm run build"
     },
     "keywords": [],
     "author": "",
